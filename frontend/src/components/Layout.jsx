@@ -1,6 +1,7 @@
 import { Outlet, Link, useNavigate } from 'react-router';
 import { useAuth } from '../features/auth/hooks/useAuth';
-import { LayoutDashboard, FolderKanban, ListTodo, LogOut, User as UserIcon } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, ListTodo, LogOut, User as UserIcon, Settings } from 'lucide-react';
+
 
 const Layout = () => {
     const { user, logout } = useAuth();
@@ -34,7 +35,12 @@ const Layout = () => {
                         <ListTodo size={20} className="text-slate-500" />
                         <span className="font-medium">My Tasks</span>
                     </Link>
+                    <Link to="/settings" className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 transition-colors">
+                        <Settings size={20} className="text-slate-500" />
+                        <span className="font-medium">Settings</span>
+                    </Link>
                 </nav>
+
 
                 <div className="p-4 border-t border-slate-100">
                     <div className="flex items-center gap-3 mb-4 p-2">

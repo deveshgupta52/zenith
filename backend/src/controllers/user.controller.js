@@ -8,3 +8,32 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        const user = await User.findByIdAndUpdate(req.user.id, { name, email }, { returnDocument: 'after' }).select('-password');
+        res.status(200).json({ user });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const user = await User.findById(req.user.id);
+        
+        if (!(await user.comparePassword(currentPassword, user.password))) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+        
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+

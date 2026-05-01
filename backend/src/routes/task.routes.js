@@ -19,7 +19,6 @@ router.get('/my-tasks', getMyTasks);
 
 router.route('/')
     .post([
-        authorize('ADMIN'),
         body('title').notEmpty().withMessage('Task title is required'),
         body('project').notEmpty().withMessage('Project ID is required'),
         validate
@@ -29,6 +28,7 @@ router.get('/project/:projectId', getTasksByProject);
 
 router.route('/:id')
     .patch(updateTask)
-    .delete([authorize('ADMIN')], deleteTask);
+    .delete(deleteTask);
+
 
 export default router;

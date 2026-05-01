@@ -21,13 +21,15 @@ export const getTasksByProject = async (req, res) => {
 
 export const updateTask = async (req, res) => {
     try {
-        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' })
+            .populate('assignedTo', 'name email');
         if (!task) return res.status(404).json({ message: 'Task not found' });
         res.status(200).json({ task });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 export const deleteTask = async (req, res) => {
     try {
