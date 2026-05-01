@@ -31,7 +31,7 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData, loading, members, p
                 project: projectId
             });
         }
-    }, [initialData, reset, projectId]);
+    }, [initialData, reset, projectId, isOpen]);
 
     const toggleMember = (memberId) => {
         setSelectedMembers(prev => 
@@ -51,46 +51,46 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData, loading, members, p
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div className="flex justify-between items-center p-6 border-b border-slate-100">
-                    <h2 className="text-xl font-bold text-slate-900">
-                        {initialData ? 'Edit Task' : 'Create New Task'}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+            <div className="bg-neutral-950 border border-neutral-900 rounded-lg w-full max-w-lg shadow-none overflow-hidden transition-none">
+                <div className="flex justify-between items-center p-6 border-b border-neutral-900">
+                    <h2 className="text-lg font-semibold text-white">
+                        {initialData ? 'Edit Task' : 'Create Task'}
                     </h2>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                        <X size={20} className="text-slate-500" />
+                    <button onClick={onClose} className="p-2 text-neutral-500 hover:text-white transition-none">
+                        <X size={18} />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
                     <input type="hidden" {...register('project')} value={projectId} />
                     
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Task Title</label>
+                        <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2">Title</label>
                         <input
                             {...register('title', { required: 'Title is required' })}
-                            className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                            placeholder="What needs to be done?"
+                            className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
+                            placeholder="Task title..."
                         />
                         {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>}
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                        <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2">Description</label>
                         <textarea
                             {...register('description')}
                             rows={3}
-                            className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none"
-                            placeholder="Add more details..."
+                            className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none resize-none"
+                            placeholder="Details..."
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                            <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2">Status</label>
                             <select
                                 {...register('status')}
-                                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white"
+                                className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
                             >
                                 <option value="To Do">To Do</option>
                                 <option value="In Progress">In Progress</option>
@@ -98,10 +98,10 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData, loading, members, p
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Priority</label>
+                            <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2">Priority</label>
                             <select
                                 {...register('priority')}
-                                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white"
+                                className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
                             >
                                 <option value="Low">Low</option>
                                 <option value="Medium">Medium</option>
@@ -110,57 +110,55 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData, loading, members, p
                         </div>
                     </div>
 
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Assign To Members</label>
-                            <div className="grid grid-cols-2 gap-2 border border-slate-100 rounded-xl p-3 bg-slate-50/50">
-                                {members?.map(member => (
-                                    <button
-                                        key={member._id}
-                                        type="button"
-                                        onClick={() => toggleMember(member._id)}
-                                        className={`flex items-center gap-2 p-2 rounded-lg text-left transition-all border ${
-                                            selectedMembers.includes(member._id) 
-                                                ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                                                : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'
-                                        }`}
-                                    >
-                                        <div className={`w-5 h-5 rounded flex items-center justify-center border ${
-                                            selectedMembers.includes(member._id) ? 'bg-white/20 border-white/40' : 'bg-slate-100 border-slate-200'
-                                        }`}>
-                                            {selectedMembers.includes(member._id) && <Check size={12} />}
-                                        </div>
-                                        <span className="text-xs font-semibold truncate">{member.name}</span>
-                                    </button>
-                                ))}
-                                {members?.length === 0 && <p className="text-xs text-slate-400 col-span-2 py-2 text-center">No members available</p>}
-                            </div>
+                    <div>
+                        <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2">Assignees</label>
+                        <div className="grid grid-cols-2 gap-2 p-3 bg-neutral-900/50 border border-neutral-900 rounded">
+                            {members?.map(member => (
+                                <button
+                                    key={member._id}
+                                    type="button"
+                                    onClick={() => toggleMember(member._id)}
+                                    className={`flex items-center gap-2 p-2 rounded text-left transition-none border ${
+                                        selectedMembers.includes(member._id) 
+                                            ? 'bg-neutral-800 text-white border-neutral-700' 
+                                            : 'bg-neutral-900 text-neutral-500 border-neutral-800'
+                                    }`}
+                                >
+                                    <div className={`w-4 h-4 rounded-sm flex items-center justify-center border ${
+                                        selectedMembers.includes(member._id) ? 'bg-white border-white text-black' : 'bg-neutral-800 border-neutral-700'
+                                    }`}>
+                                        {selectedMembers.includes(member._id) && <Check size={10} />}
+                                    </div>
+                                    <span className="text-xs truncate">{member.name}</span>
+                                </button>
+                            ))}
                         </div>
-                        
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Due Date</label>
-                            <input
-                                {...register('dueDate')}
-                                type="date"
-                                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                            />
-                        </div>
+                    </div>
+                    
+                    <div>
+                        <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-wider mb-2">Due Date</label>
+                        <input
+                            {...register('dueDate')}
+                            type="date"
+                            className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
+                        />
                     </div>
 
                     <div className="flex gap-3 pt-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-lg font-semibold hover:bg-slate-50 transition-all"
+                            className="flex-1 px-4 py-2 border border-neutral-900 text-neutral-500 rounded font-medium text-sm transition-none"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-2 bg-white text-black btn-white rounded font-medium text-sm transition-none flex items-center justify-center gap-2"
                         >
-                            {loading && <Loader2 size={18} className="animate-spin" />}
+
+                            {loading && <Loader2 size={16} className="animate-spin text-black" />}
                             {initialData ? 'Update Task' : 'Create Task'}
                         </button>
                     </div>

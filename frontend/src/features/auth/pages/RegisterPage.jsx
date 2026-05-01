@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
-import { UserPlus, Mail, Lock, User, Shield, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 const RegisterPage = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -18,92 +18,79 @@ const RegisterPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
-            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-slate-100">
+        <div className="min-h-screen flex items-center justify-center bg-black px-4 py-12">
+            <div className="max-w-md w-full space-y-10 bg-neutral-950 p-10 border border-neutral-900 rounded-lg">
                 <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600 text-white mb-6">
-                        <UserPlus size={32} />
-                    </div>
-                    <h2 className="text-3xl font-extrabold text-slate-900">Create Account</h2>
-                    <p className="mt-2 text-sm text-slate-500">Join Ethara Pro to start collaborating</p>
+                    <h2 className="text-2xl font-semibold text-white tracking-tight">Create Account</h2>
+                    <p className="mt-2 text-sm text-neutral-500">Join Nexus Pro platform</p>
                 </div>
 
-                <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
+
+                <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                     {error && (
-                        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-100">
+                        <div className="bg-red-900/10 text-red-500 p-3 rounded text-xs border border-red-900/30">
                             {error}
                         </div>
                     )}
                     
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-                            <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                <input
-                                    {...register('name', { required: 'Name is required' })}
-                                    className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="John Doe"
-                                />
-                            </div>
-                            {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
+                            <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">Full Name</label>
+                            <input
+                                {...register('name', { required: 'Name is required' })}
+                                className="block w-full px-4 py-2.5 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-blue-500 outline-none transition-none"
+                                placeholder="John Doe"
+                            />
+                            {errors.name && <p className="mt-1 text-[10px] text-red-500">{errors.name.message}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Email address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                <input
-                                    {...register('email', { required: 'Email is required' })}
-                                    type="email"
-                                    className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="name@company.com"
-                                />
-                            </div>
-                            {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+                            <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">Email</label>
+                            <input
+                                {...register('email', { required: 'Email is required' })}
+                                type="email"
+                                className="block w-full px-4 py-2.5 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-blue-500 outline-none transition-none"
+                                placeholder="name@company.com"
+                            />
+                            {errors.email && <p className="mt-1 text-[10px] text-red-500">{errors.email.message}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                <input
-                                    {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 chars' } })}
-                                    type="password"
-                                    className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                            {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
+                            <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">Password</label>
+                            <input
+                                {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 chars' } })}
+                                type="password"
+                                className="block w-full px-4 py-2.5 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-blue-500 outline-none transition-none"
+                                placeholder="••••••••"
+                            />
+                            {errors.password && <p className="mt-1 text-[10px] text-red-500">{errors.password.message}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
-                            <div className="relative">
-                                <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                <select
-                                    {...register('role', { required: 'Role is required' })}
-                                    className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none appearance-none transition-all bg-white"
-                                >
-                                    <option value="MEMBER">Member</option>
-                                    <option value="ADMIN">Admin</option>
-                                </select>
-                            </div>
+                            <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">Role</label>
+                            <select
+                                {...register('role', { required: 'Role is required' })}
+                                className="block w-full px-4 py-2.5 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-blue-500 outline-none transition-none appearance-none"
+                            >
+                                <option value="MEMBER">Member</option>
+                                <option value="ADMIN">Admin</option>
+                            </select>
                         </div>
                     </div>
 
                     <button
                         disabled={loading}
                         type="submit"
-                        className="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all disabled:opacity-70"
+                        className="w-full flex justify-center py-2.5 px-4 bg-white text-black btn-white text-sm font-semibold rounded transition-none disabled:opacity-50"
                     >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : 'Create Account'}
+                        {loading ? <Loader2 className="animate-spin text-black" size={18} /> : 'Create Account'}
                     </button>
 
+
                     <div className="text-center">
-                        <p className="text-sm text-slate-500">
+                        <p className="text-xs text-neutral-500">
                             Already have an account?{' '}
-                            <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
+                            <Link to="/login" className="font-semibold text-white hover:underline transition-none">
                                 Sign in
                             </Link>
                         </p>

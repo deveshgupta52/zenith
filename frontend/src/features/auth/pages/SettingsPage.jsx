@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../hooks/useAuth';
 import { userService } from '../services/userService';
-import { User, Lock, Bell, Shield, Loader2, CheckCircle2 } from 'lucide-react';
+import { Shield, Loader2, CheckCircle2 } from 'lucide-react';
 
 const SettingsPage = () => {
     const { user, fetchMe } = useAuth();
@@ -56,56 +56,57 @@ const SettingsPage = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in duration-500 bg-black min-h-full pb-20">
             <div>
-                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Settings</h1>
-                <p className="text-slate-500 mt-1">Manage your account preferences and security</p>
+                <h1 className="text-2xl font-semibold text-white">Settings</h1>
+                <p className="text-neutral-500 text-sm mt-1">Manage your account preferences</p>
             </div>
 
             {success && (
-                <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3">
-                    <CheckCircle2 size={20} />
-                    <span className="text-sm font-medium">{success}</span>
+                <div className="bg-green-900/10 border border-green-900/30 text-green-500 px-4 py-3 rounded flex items-center gap-3">
+                    <CheckCircle2 size={16} />
+                    <span className="text-xs font-medium">{success}</span>
                 </div>
             )}
 
             {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3">
-                    <Shield size={20} />
-                    <span className="text-sm font-medium">{error}</span>
+                <div className="bg-red-900/10 border border-red-900/30 text-red-500 px-4 py-3 rounded flex items-center gap-3">
+                    <Shield size={16} />
+                    <span className="text-xs font-medium">{error}</span>
                 </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-1">
-                    <h3 className="font-bold text-slate-900">Profile Information</h3>
-                    <p className="text-sm text-slate-500">Update your account's profile information and email address.</p>
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider text-[10px] text-neutral-400">Profile Info</h3>
+                    <p className="text-xs text-neutral-600">Update your public profile and email.</p>
                 </div>
                 <div className="md:col-span-2">
-                    <form onSubmit={handleProfileSubmit(onProfileUpdate)} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <form onSubmit={handleProfileSubmit(onProfileUpdate)} className="bg-neutral-950 p-6 rounded-lg border border-neutral-900 space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                                <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">Full Name</label>
                                 <input 
                                     {...profileRegister('name')}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                                <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">Email</label>
                                 <input 
                                     {...profileRegister('email')}
                                     type="email"
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
                                 />
                             </div>
                         </div>
                         <div className="flex justify-end">
                             <button 
                                 disabled={loading}
-                                className="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition-all flex items-center gap-2"
+                                className="bg-white text-black btn-white px-6 py-2 rounded font-semibold text-xs transition-none flex items-center gap-2"
                             >
-                                {loading && <Loader2 size={16} className="animate-spin" />}
+
+                                {loading && <Loader2 size={14} className="animate-spin" />}
                                 Save Changes
                             </button>
                         </div>
@@ -113,39 +114,37 @@ const SettingsPage = () => {
                 </div>
             </div>
 
-            <hr className="border-slate-100" />
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="border-t border-neutral-900 pt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-1">
-                    <h3 className="font-bold text-slate-900">Change Password</h3>
-                    <p className="text-sm text-slate-500">Ensure your account is using a long, random password to stay secure.</p>
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider text-[10px] text-neutral-400">Security</h3>
+                    <p className="text-xs text-neutral-600">Update your password to stay secure.</p>
                 </div>
                 <div className="md:col-span-2">
-                    <form onSubmit={handlePasswordSubmit(onPasswordChange)} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div className="space-y-4">
+                    <form onSubmit={handlePasswordSubmit(onPasswordChange)} className="bg-neutral-950 p-6 rounded-lg border border-neutral-900 space-y-6">
+                        <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Current Password</label>
+                                <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">Current Password</label>
                                 <input 
                                     {...passwordRegister('currentPassword')}
                                     type="password"
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
                                 />
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">New Password</label>
+                                    <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">New Password</label>
                                     <input 
                                         {...passwordRegister('newPassword')}
                                         type="password"
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Confirm New Password</label>
+                                    <label className="block text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-2">Confirm New Password</label>
                                     <input 
                                         {...passwordRegister('confirmPassword')}
                                         type="password"
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        className="w-full px-4 py-2 bg-neutral-900 border border-neutral-800 rounded text-white text-sm focus:border-white outline-none transition-none"
                                     />
                                 </div>
                             </div>
@@ -153,9 +152,10 @@ const SettingsPage = () => {
                         <div className="flex justify-end">
                             <button 
                                 disabled={loading}
-                                className="bg-slate-900 text-white px-6 py-2 rounded-lg font-bold hover:bg-black transition-all flex items-center gap-2"
+                                className="bg-white text-black btn-white px-6 py-2 rounded font-semibold text-xs transition-none flex items-center gap-2"
                             >
-                                {loading && <Loader2 size={16} className="animate-spin" />}
+
+                                {loading && <Loader2 size={14} className="animate-spin" />}
                                 Update Password
                             </button>
                         </div>
@@ -163,29 +163,27 @@ const SettingsPage = () => {
                 </div>
             </div>
 
-            <hr className="border-slate-100" />
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="border-t border-neutral-900 pt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-1">
-                    <h3 className="font-bold text-slate-900">Notifications</h3>
-                    <p className="text-sm text-slate-500">Configure how you receive alerts and updates.</p>
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider text-[10px] text-neutral-400">Notifications</h3>
+                    <p className="text-xs text-neutral-600">Configure your alert preferences.</p>
                 </div>
                 <div className="md:col-span-2">
-                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <div className="space-y-4">
+                    <div className="bg-neutral-950 p-6 rounded-lg border border-neutral-900 space-y-6">
+                        <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-bold text-slate-900">Email Notifications</p>
-                                    <p className="text-xs text-slate-500">Receive task assignments via email.</p>
+                                    <p className="text-xs font-semibold text-white">Email Notifications</p>
+                                    <p className="text-[10px] text-neutral-600">Receive alerts via email.</p>
                                 </div>
-                                <input type="checkbox" className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" defaultChecked />
+                                <input type="checkbox" className="w-4 h-4 bg-neutral-900 border-neutral-800 rounded focus:ring-0 accent-white" defaultChecked />
                             </div>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-bold text-slate-900">Push Notifications</p>
-                                    <p className="text-xs text-slate-500">Receive real-time alerts in the browser.</p>
+                                    <p className="text-xs font-semibold text-white">Push Notifications</p>
+                                    <p className="text-[10px] text-neutral-600">Receive real-time browser alerts.</p>
                                 </div>
-                                <input type="checkbox" className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" defaultChecked />
+                                <input type="checkbox" className="w-4 h-4 bg-neutral-900 border-neutral-800 rounded focus:ring-0 accent-white" defaultChecked />
                             </div>
                         </div>
                     </div>

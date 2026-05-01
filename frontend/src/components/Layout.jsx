@@ -1,11 +1,11 @@
-import { Outlet, Link, useNavigate } from 'react-router';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../features/auth/hooks/useAuth';
-import { LayoutDashboard, FolderKanban, ListTodo, LogOut, User as UserIcon, Settings } from 'lucide-react';
-
+import { LayoutDashboard, FolderKanban, ListTodo, LogOut, Settings, Layers } from 'lucide-react';
 
 const Layout = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = async () => {
         await logout();
@@ -13,60 +13,63 @@ const Layout = () => {
     };
 
     return (
-        <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
-            <aside className="w-64 bg-white border-r border-slate-200 flex flex-col">
-                <div className="p-6 border-b border-slate-100">
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-2">
-                        <FolderKanban className="text-blue-600" />
-                        Ethara Pro
+        <div className="flex h-screen bg-black text-white selection:bg-neutral-800">
+            {/* Sidebar */}
+            <aside className="w-64 bg-neutral-950 border-r border-neutral-900 flex flex-col shrink-0">
+                <div className="p-6 border-b border-neutral-900">
+                    <h1 className="text-xl font-semibold text-white flex items-center gap-2 tracking-tight">
+                        <Layers className="text-white" size={24} />
+                        Nexus Pro
                     </h1>
                 </div>
                 
-                <nav className="flex-1 p-4 space-y-2">
-                    <Link to="/" className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 transition-colors">
-                        <LayoutDashboard size={20} className="text-slate-500" />
-                        <span className="font-medium">Dashboard</span>
-                    </Link>
-                    <Link to="/projects" className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 transition-colors">
-                        <FolderKanban size={20} className="text-slate-500" />
-                        <span className="font-medium">Projects</span>
-                    </Link>
-                    <Link to="/tasks" className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 transition-colors">
-                        <ListTodo size={20} className="text-slate-500" />
-                        <span className="font-medium">My Tasks</span>
-                    </Link>
-                    <Link to="/settings" className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 transition-colors">
-                        <Settings size={20} className="text-slate-500" />
-                        <span className="font-medium">Settings</span>
-                    </Link>
+                <nav className="flex-1 p-4 space-y-1">
+                    <NavItem to="/" icon={<LayoutDashboard size={18} />} label="Dashboard" active={location.pathname === '/'} />
+                    <NavItem to="/projects" icon={<FolderKanban size={18} />} label="Projects" active={location.pathname.startsWith('/projects')} />
+                    <NavItem to="/tasks" icon={<ListTodo size={18} />} label="My Tasks" active={location.pathname === '/tasks'} />
+                    <NavItem to="/settings" icon={<Settings size={18} />} label="Settings" active={location.pathname === '/settings'} />
                 </nav>
 
-
-                <div className="p-4 border-t border-slate-100">
-                    <div className="flex items-center gap-3 mb-4 p-2">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+                <div className="p-4 border-t border-neutral-900">
+                    <div className="flex items-center gap-3 mb-4 p-2 bg-neutral-900/50 rounded-lg">
+                        <div className="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center text-white font-medium text-xs">
                             {user?.name?.[0]}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold truncate">{user?.name}</p>
-                            <p className="text-xs text-slate-500 truncate capitalize">{user?.role?.toLowerCase()}</p>
+                            <p className="text-xs font-medium truncate">{user?.name}</p>
+                            <p className="text-[10px] text-neutral-500 truncate capitalize">{user?.role?.toLowerCase()}</p>
                         </div>
                     </div>
                     <button 
                         onClick={handleLogout}
-                        className="w-full flex items-center justify-center gap-2 p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors font-medium border border-transparent hover:border-red-100"
+                        className="w-full flex items-center justify-center gap-2 p-2 rounded text-red-500 transition-none font-medium border border-neutral-900 text-xs hover:bg-red-950/20"
                     >
-                        <LogOut size={18} />
+                        <LogOut size={14} />
                         Logout
                     </button>
                 </div>
             </aside>
 
-            <main className="flex-1 overflow-auto p-8">
-                <Outlet />
+            {/* Main Content */}
+            <main className="flex-1 overflow-auto bg-black">
+                <div className="p-8 max-w-7xl mx-auto">
+                    <Outlet />
+                </div>
             </main>
         </div>
     );
 };
+
+const NavItem = ({ to, icon, label, active }) => (
+    <Link 
+        to={to} 
+        className={`flex items-center gap-3 p-2.5 rounded transition-none ${
+            active ? 'bg-white text-black font-semibold' : 'text-neutral-400 hover:text-white'
+        }`}
+    >
+        {icon}
+        <span className="text-sm">{label}</span>
+    </Link>
+);
 
 export default Layout;

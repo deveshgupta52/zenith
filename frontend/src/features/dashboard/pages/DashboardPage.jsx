@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { dashboardService } from '../services/dashboardService';
 import { 
-    LayoutDashboard, 
     CheckCircle2, 
     Clock, 
     AlertCircle, 
     BarChart3, 
     PieChart as PieChartIcon,
     Loader2,
-    TrendingUp,
     ListTodo
 } from 'lucide-react';
 import {
@@ -18,7 +16,6 @@ import {
 import { Bar, Pie } from 'react-chartjs-2';
 
 ChartJS.register(...registerables);
-
 
 const DashboardPage = () => {
     const [stats, setStats] = useState(null);
@@ -40,116 +37,75 @@ const DashboardPage = () => {
 
     if (loading) {
         return (
-            <div className="h-full flex items-center justify-center">
-                <Loader2 className="animate-spin text-blue-600" size={48} />
+            <div className="h-full flex items-center justify-center bg-black">
+                <Loader2 className="animate-spin text-white" size={32} />
             </div>
         );
     }
 
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: { color: '#a3a3a3', font: { family: 'system-ui' } }
+            }
+        },
+        scales: {
+            x: { grid: { color: '#1a1a1a' }, ticks: { color: '#a3a3a3' } },
+            y: { grid: { color: '#1a1a1a' }, ticks: { color: '#a3a3a3' } }
+        }
+    };
+
     const statusData = {
         labels: ['To Do', 'In Progress', 'Done'],
-        datasets: [
-            {
-                label: 'Tasks by Status',
-                data: [
-                    stats?.tasksByStatus?.todo || 0, 
-                    stats?.tasksByStatus?.inProgress || 0, 
-                    stats?.tasksByStatus?.done || 0
-                ],
-                backgroundColor: ['#f1f5f9', '#dbeafe', '#dcfce7'],
-                borderColor: ['#cbd5e1', '#3b82f6', '#22c55e'],
-                borderWidth: 1,
-            },
-        ],
+        datasets: [{
+            label: 'Tasks',
+            data: [stats?.tasksByStatus?.todo || 0, stats?.tasksByStatus?.inProgress || 0, stats?.tasksByStatus?.done || 0],
+            backgroundColor: ['#262626', '#525252', '#a3a3a3'],
+            borderWidth: 0,
+        }],
     };
 
     const priorityData = {
         labels: ['Low', 'Medium', 'High'],
-        datasets: [
-            {
-                data: [
-                    stats?.tasksByPriority?.low || 0, 
-                    stats?.tasksByPriority?.medium || 0, 
-                    stats?.tasksByPriority?.high || 0
-                ],
-                backgroundColor: ['#f1f5f9', '#fef3c7', '#fee2e2'],
-                borderColor: ['#94a3b8', '#f59e0b', '#ef4444'],
-                hoverOffset: 4,
-            },
-        ],
+        datasets: [{
+            data: [stats?.tasksByPriority?.low || 0, stats?.tasksByPriority?.medium || 0, stats?.tasksByPriority?.high || 0],
+            backgroundColor: ['#262626', '#525252', '#a3a3a3'],
+            borderWidth: 0,
+        }],
     };
 
-
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-10 bg-black min-h-full">
             <div>
-                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Dashboard</h1>
-                <p className="text-slate-500 mt-1">Real-time overview of your projects and productivity</p>
+                <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
+                <p className="text-neutral-500 text-sm mt-1">Overview of your activity</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard 
-                    title="Total Tasks" 
-                    value={stats?.totalTasks} 
-                    icon={<ListTodo className="text-blue-600" />}
-                    bgColor="bg-blue-50"
-                />
-                <StatCard 
-                    title="Completed" 
-                    value={stats?.completedTasks} 
-                    icon={<CheckCircle2 className="text-green-600" />}
-                    bgColor="bg-green-50"
-                />
-                <StatCard 
-                    title="Pending" 
-                    value={stats?.pendingTasks} 
-                    icon={<Clock className="text-amber-600" />}
-                    bgColor="bg-amber-50"
-                />
-                <StatCard 
-                    title="Overdue" 
-                    value={stats?.overdueTasks} 
-                    icon={<AlertCircle className="text-red-600" />}
-                    bgColor="bg-red-50"
-                    isAlert={stats?.overdueTasks > 0}
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard title="Total Tasks" value={stats?.totalTasks} icon={<ListTodo size={18} />} />
+                <StatCard title="Completed" value={stats?.completedTasks} icon={<CheckCircle2 size={18} />} />
+                <StatCard title="Pending" value={stats?.pendingTasks} icon={<Clock size={18} />} />
+                <StatCard title="Overdue" value={stats?.overdueTasks} icon={<AlertCircle size={18} />} isAlert={stats?.overdueTasks > 0} />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                            <BarChart3 size={20} className="text-blue-600" />
-                            Task Status Distribution
-                        </h3>
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-neutral-950 p-6 border border-neutral-900 rounded-lg">
+                    <h3 className="text-sm font-medium text-neutral-400 mb-6 flex items-center gap-2">
+                        <BarChart3 size={16} /> Status Distribution
+                    </h3>
                     <div className="h-64">
-                        <Bar 
-                            data={statusData} 
-                            options={{ 
-                                responsive: true, 
-                                maintainAspectRatio: false,
-                                plugins: { legend: { display: false } }
-                            }} 
-                        />
+                        <Bar data={statusData} options={chartOptions} />
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                            <PieChartIcon size={20} className="text-indigo-600" />
-                            Priority Breakdown
-                        </h3>
-                    </div>
+                <div className="bg-neutral-950 p-6 border border-neutral-900 rounded-lg">
+                    <h3 className="text-sm font-medium text-neutral-400 mb-6 flex items-center gap-2">
+                        <PieChartIcon size={16} /> Priority Breakdown
+                    </h3>
                     <div className="h-64 flex justify-center">
-                        <Pie 
-                            data={priorityData} 
-                            options={{ 
-                                responsive: true, 
-                                maintainAspectRatio: false 
-                            }} 
-                        />
+                        <Pie data={priorityData} options={{ ...chartOptions, scales: {} }} />
                     </div>
                 </div>
             </div>
@@ -157,16 +113,14 @@ const DashboardPage = () => {
     );
 };
 
-const StatCard = ({ title, value, icon, bgColor, isAlert }) => (
-    <div className={`bg-white p-6 rounded-2xl border ${isAlert ? 'border-red-200 shadow-red-50' : 'border-slate-200'} shadow-sm transition-all hover:shadow-md group`}>
+const StatCard = ({ title, value, icon, isAlert }) => (
+    <div className={`bg-neutral-950 p-6 border ${isAlert ? 'border-red-900' : 'border-neutral-900'} rounded-lg`}>
         <div className="flex items-center justify-between mb-4">
-            <div className={`w-12 h-12 ${bgColor} rounded-xl flex items-center justify-center transition-transform group-hover:scale-110`}>
-                {icon}
-            </div>
-            {isAlert && <span className="flex h-3 w-3 rounded-full bg-red-500 animate-ping"></span>}
+            <div className="text-neutral-400">{icon}</div>
+            {isAlert && <div className="w-2 h-2 rounded-full bg-red-600" />}
         </div>
-        <p className="text-slate-500 text-sm font-medium">{title}</p>
-        <h4 className="text-3xl font-bold text-slate-900 mt-1">{value || 0}</h4>
+        <p className="text-neutral-500 text-xs font-medium uppercase tracking-wider">{title}</p>
+        <h4 className="text-2xl font-semibold text-white mt-1">{value || 0}</h4>
     </div>
 );
 

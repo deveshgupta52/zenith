@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
-import { useProjects } from '../../projects/hooks/useProjects';
 import { useTasks } from '../hooks/useTasks';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { 
@@ -10,15 +9,13 @@ import {
     AlertCircle, 
     CheckCircle2, 
     Circle, 
-    MoreVertical, 
     Trash2, 
     Edit2, 
     User as UserIcon,
     Calendar,
     Users,
     Loader2,
-    Search,
-    Filter
+    Search
 } from 'lucide-react';
 import TaskModal from '../components/TaskModal';
 import api from '../../../utils/axios';
@@ -53,9 +50,12 @@ const ProjectDetailsPage = () => {
         fetchProjectDetails();
     }, [projectId, fetchTasks, navigate]);
 
+    const projectMembers = [project?.owner, ...(project?.members || [])]
+        .filter(m => m && m._id);
+    const uniqueMembers = Array.from(new Map(projectMembers.map(m => [m._id, m])).values());
 
-
-
+    const isProjectMember = uniqueMembers.some(m => m._id === (user?._id || user?.id));
+    const canManageTasks = user?.role === 'ADMIN' || isProjectMember;
 
     const filteredTasks = tasks.filter(task => {
         const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -64,7 +64,6 @@ const ProjectDetailsPage = () => {
         const matchesPriority = filterPriority === 'All' || task.priority === filterPriority;
         return matchesSearch && matchesStatus && matchesPriority;
     });
-
 
     const handleTaskSubmit = async (data) => {
         try {
@@ -80,171 +79,126 @@ const ProjectDetailsPage = () => {
         }
     };
 
-    const isOverdue = (dueDate, status) => {
-        if (!dueDate || status === 'Done') return false;
-        return new Date(dueDate) < new Date();
-    };
-
     if (loading) {
         return (
-            <div className="h-full flex items-center justify-center">
-                <Loader2 className="animate-spin text-blue-600" size={48} />
+            <div className="h-full flex items-center justify-center bg-black">
+                <Loader2 className="animate-spin text-white" size={32} />
             </div>
         );
     }
 
-    const projectMembers = [project?.owner, ...(project?.members || [])]
-        .filter(m => m && m._id);
-    const uniqueMembers = Array.from(new Map(projectMembers.map(m => [m._id, m])).values());
-
-    const isProjectMember = uniqueMembers.some(m => m._id === (user?._id || user?.id));
-    const canManageTasks = user?.role === 'ADMIN' || isProjectMember;
-
-
-
-
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-10 bg-black min-h-full">
             <div className="flex items-center gap-4">
-                <Link to="/projects" className="p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200">
-                    <ArrowLeft size={20} className="text-slate-600" />
+                <Link to="/projects" className="p-2 hover:bg-neutral-900 rounded border border-transparent transition-none">
+                    <ArrowLeft size={18} className="text-neutral-500" />
                 </Link>
                 <div>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-3xl font-extrabold text-slate-900">{project?.name}</h1>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${project?.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                        <h1 className="text-2xl font-semibold text-white">{project?.name}</h1>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${project?.status === 'Completed' ? 'bg-green-900/20 text-green-500 border border-green-900/50' : 'bg-neutral-900 text-neutral-400 border border-neutral-800'}`}>
                             {project?.status}
                         </span>
                     </div>
-                    <p className="text-slate-500 mt-1">{project?.description}</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <div className="lg:col-span-3 space-y-6">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <h2 className="text-xl font-bold text-slate-900 whitespace-nowrap">Tasks</h2>
-                        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                            <div className="relative flex-1 md:flex-none md:w-64">
-                                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="lg:col-span-3 space-y-8">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-neutral-900 pb-6">
+                        <h2 className="text-lg font-semibold text-white">Tasks</h2>
+                        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                            <div className="relative flex-1 md:flex-none md:w-48">
+                                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                                 <input 
                                     type="text" 
-                                    placeholder="Search tasks..." 
+                                    placeholder="Search..." 
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full pl-9 pr-4 py-1.5 bg-neutral-950 border border-neutral-900 rounded text-xs focus:border-white outline-none transition-none text-white"
                                 />
                             </div>
                             <select 
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
-                                className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                className="px-3 py-1.5 bg-neutral-950 border border-neutral-900 rounded text-xs outline-none transition-none text-neutral-400"
                             >
                                 <option value="All">All Status</option>
                                 <option value="To Do">To Do</option>
                                 <option value="In Progress">In Progress</option>
                                 <option value="Done">Done</option>
                             </select>
-                            <select 
-                                value={filterPriority}
-                                onChange={(e) => setFilterPriority(e.target.value)}
-                                className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                            >
-                                <option value="All">All Priorities</option>
-                                <option value="Low">Low</option>
-                                <option value="Medium">Medium</option>
-                                <option value="High">High</option>
-                            </select>
                             {canManageTasks && (
                                 <button 
                                     onClick={() => { setEditingTask(null); setIsModalOpen(true); }}
-                                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-blue-700 transition-all text-sm whitespace-nowrap"
+                                    className="flex items-center gap-2 bg-white text-black btn-white px-4 py-1.5 rounded font-semibold text-xs transition-none"
                                 >
-                                    <Plus size={16} /> Add Task
+
+                                    <Plus size={14} /> Add Task
                                 </button>
                             )}
                         </div>
                     </div>
 
-
-
-                    <div className="space-y-3">
+                    <div className="space-y-1">
                         {filteredTasks.length === 0 ? (
-                            <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-12 text-center">
-                                <AlertCircle className="mx-auto text-slate-300 mb-4" size={48} />
-                                <p className="text-slate-500 font-medium">No tasks found matching your criteria.</p>
+                            <div className="border border-neutral-900 border-dashed rounded-lg p-10 text-center">
+                                <p className="text-neutral-500 text-sm">No tasks found.</p>
                             </div>
                         ) : (
                             filteredTasks.map((task) => (
-
-                                <div key={task._id} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all flex items-center gap-4 group">
-                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                                        task.status === 'Done' ? 'bg-green-50 text-green-600' : 
-                                        task.status === 'In Progress' ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-400'
+                                <div key={task._id} className="bg-neutral-950 border border-neutral-900 p-4 flex items-center gap-4 transition-none group rounded-lg">
+                                    <div className={`w-8 h-8 rounded flex items-center justify-center shrink-0 border ${
+                                        task.status === 'Done' ? 'bg-green-900/10 border-green-900/30 text-green-500' : 
+                                        task.status === 'In Progress' ? 'bg-neutral-900 border-neutral-800 text-neutral-200' : 'bg-neutral-900 border-neutral-800 text-neutral-600'
                                     }`}>
-                                        {task.status === 'Done' ? <CheckCircle2 size={20} /> : 
-                                         task.status === 'In Progress' ? <Circle size={20} className="fill-blue-600/20" /> : <Circle size={20} />}
+                                        {task.status === 'Done' ? <CheckCircle2 size={16} /> : <Circle size={16} />}
                                     </div>
                                     
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-0.5">
-                                            <h4 className={`font-bold truncate ${task.status === 'Done' ? 'text-slate-400 line-through' : 'text-slate-900'}`}>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <h4 className={`text-sm font-medium truncate ${task.status === 'Done' ? 'text-neutral-600 line-through' : 'text-neutral-200'}`}>
                                                 {task.title}
                                             </h4>
-                                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${
-                                                task.priority === 'High' ? 'bg-red-100 text-red-700' : 
-                                                task.priority === 'Medium' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'
+                                            <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase border ${
+                                                task.priority === 'High' ? 'bg-red-900/10 text-red-500 border-red-900/30' : 
+                                                task.priority === 'Medium' ? 'bg-amber-900/10 text-amber-500 border-amber-900/30' : 'bg-neutral-900 text-neutral-500 border-neutral-800'
                                             }`}>
                                                 {task.priority}
                                             </span>
-                                            {isOverdue(task.dueDate, task.status) && (
-                                                <span className="flex items-center gap-1 text-[10px] font-bold text-red-600 animate-pulse">
-                                                    <AlertCircle size={10} /> OVERDUE
-                                                </span>
-                                            )}
                                         </div>
-                                        <div className="flex items-center gap-4 text-xs text-slate-500">
-                                            <div className="flex items-center -space-x-2">
-                                                {task.assignedTo && task.assignedTo.length > 0 ? (
-                                                    task.assignedTo.map((member, idx) => (
-                                                        <div 
-                                                            key={member._id || idx} 
-                                                            className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[8px] font-bold text-slate-600"
-                                                            title={member.name}
-                                                        >
-                                                            {member.name?.[0]}
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <span className="text-slate-400 italic">Unassigned</span>
-                                                )}
+                                        <div className="flex items-center gap-4 text-[10px] text-neutral-500">
+                                            <div className="flex items-center -space-x-1">
+                                                {task.assignedTo?.map((m, i) => (
+                                                    <div key={m._id || i} className="w-5 h-5 rounded-full bg-neutral-800 border border-neutral-950 flex items-center justify-center text-[8px]" title={m.name}>
+                                                        {m.name?.[0]}
+                                                    </div>
+                                                ))}
                                             </div>
                                             {task.dueDate && (
                                                 <div className="flex items-center gap-1">
-                                                    <Calendar size={12} />
+                                                    <Calendar size={10} />
                                                     <span>{new Date(task.dueDate).toLocaleDateString()}</span>
                                                 </div>
                                             )}
                                         </div>
-
                                     </div>
 
-                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex gap-2">
                                         <button 
                                             onClick={() => { setEditingTask(task); setIsModalOpen(true); }}
-                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                            className="p-1.5 text-neutral-600 hover:text-white transition-none"
                                         >
-                                            <Edit2 size={16} />
+                                            <Edit2 size={14} />
                                         </button>
                                         {canManageTasks && (
                                             <button 
                                                 onClick={() => removeTask(task._id)}
-                                                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                className="p-1.5 text-neutral-600 hover:text-red-500 transition-none"
                                             >
-                                                <Trash2 size={16} />
+                                                <Trash2 size={14} />
                                             </button>
                                         )}
-
                                     </div>
                                 </div>
                             ))
@@ -253,31 +207,14 @@ const ProjectDetailsPage = () => {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <Users size={18} className="text-blue-600" />
-                            Team Members
+                    <div className="bg-neutral-950 border border-neutral-900 rounded-lg p-6">
+                        <h3 className="text-sm font-medium text-neutral-400 mb-6 flex items-center gap-2 uppercase tracking-widest text-[10px]">
+                            Team
                         </h3>
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 p-2 bg-blue-50 rounded-xl border border-blue-100">
-                                <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
-                                    {project?.owner?.name?.[0]}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-bold text-slate-900 truncate">{project?.owner?.name}</p>
-                                    <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Owner</p>
-                                </div>
-                            </div>
+                        <div className="space-y-4">
+                            <MemberItem name={project?.owner?.name} role="Owner" isOwner />
                             {project?.members?.map((member) => (
-                                <div key={member._id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl transition-colors">
-                                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-[10px] font-bold">
-                                        {member.name?.[0]}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-bold text-slate-900 truncate">{member.name}</p>
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Member</p>
-                                    </div>
-                                </div>
+                                <MemberItem key={member._id} name={member.name} role="Member" />
                             ))}
                         </div>
                     </div>
@@ -291,12 +228,22 @@ const ProjectDetailsPage = () => {
                 initialData={editingTask}
                 loading={tasksLoading}
                 members={uniqueMembers}
-
-
                 projectId={projectId}
             />
         </div>
     );
 };
+
+const MemberItem = ({ name, role, isOwner }) => (
+    <div className="flex items-center gap-3">
+        <div className={`w-8 h-8 rounded flex items-center justify-center text-xs font-medium ${isOwner ? 'bg-neutral-800 text-neutral-300' : 'bg-neutral-900 text-neutral-500'}`}>
+            {name?.[0]}
+        </div>
+        <div className="min-w-0">
+            <p className="text-xs font-medium text-neutral-200 truncate">{name}</p>
+            <p className="text-[10px] text-neutral-600">{role}</p>
+        </div>
+    </div>
+);
 
 export default ProjectDetailsPage;

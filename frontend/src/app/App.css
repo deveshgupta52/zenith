@@ -1,1 +1,55 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #ffffff;
+  --color-secondary: #0a0a0a;
+}
+
+@layer base {
+  body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  /* Force Primary White Button */
+  .btn-white {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .btn-white:hover {
+    background-color: #e5e5e5 !important;
+  }
+
+  .btn-white:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Global Layout Fixes */
+* {
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+}
