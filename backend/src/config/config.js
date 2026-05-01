@@ -6,18 +6,19 @@ if (process.env.NODE_ENV === 'development') {
 }   
 
 if(!process.env.MONGODB_URI){
-    console.error('Error in connecting to database.',err);
+    console.log('MONGODB_URI is missing');
     process.exit(1);
 }
 
 if(!process.env.JWT_SECRET){
-    console.error('Error in connecting to database.',err);
+    console.log('JWT_SECRET is missing');
     process.exit(1);
 }
 
 const _config = {
     PORT: process.env.PORT || 3000,
     MONGODB_URI: process.env.MONGODB_URI,
+    JWT_SECRET: process.env.JWT_SECRET,
     NODE_ENV: process.env.NODE_ENV || 'development',
 };
 
