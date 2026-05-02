@@ -54,8 +54,9 @@ const ProjectDetailsPage = () => {
         .filter(m => m && m._id);
     const uniqueMembers = Array.from(new Map(projectMembers.map(m => [m._id, m])).values());
 
-    const isProjectMember = uniqueMembers.some(m => m._id === (user?._id || user?.id));
-    const canManageTasks = user?.role === 'ADMIN' || isProjectMember;
+    const isAdmin = user?.role === 'ADMIN';
+    const isProjectMember = uniqueMembers.some(m => (m._id || m) === (user?._id || user?.id));
+    const canManageTasks = isAdmin; // Only Admin can Add, Edit, Delete any task
 
     const filteredTasks = tasks.filter(task => {
         const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -74,6 +75,18 @@ const ProjectDetailsPage = () => {
             }
             setIsModalOpen(false);
             setEditingTask(null);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleToggleStatus = async (task) => {
+        const isAssigned = task.assignedTo?.some(m => (m._id || m) === (user?._id || user?.id));
+        if (!isAdmin && !isAssigned) return;
+
+        const nextStatus = task.status === 'Done' ? 'To Do' : 'Done';
+        try {
+            await editTask(task._id, { status: nextStatus });
         } catch (err) {
             console.error(err);
         }
@@ -148,12 +161,16 @@ const ProjectDetailsPage = () => {
                         ) : (
                             filteredTasks.map((task) => (
                                 <div key={task._id} className="bg-neutral-950 border border-neutral-900 p-4 flex items-center gap-4 transition-none group rounded-lg">
-                                    <div className={`w-8 h-8 rounded flex items-center justify-center shrink-0 border ${
-                                        task.status === 'Done' ? 'bg-green-900/10 border-green-900/30 text-green-500' : 
-                                        task.status === 'In Progress' ? 'bg-neutral-900 border-neutral-800 text-neutral-200' : 'bg-neutral-900 border-neutral-800 text-neutral-600'
-                                    }`}>
+                                    <button 
+                                        disabled={!isAdmin && !task.assignedTo?.some(m => (m._id || m) === (user?._id || user?.id))}
+                                        onClick={() => handleToggleStatus(task)}
+                                        className={`w-8 h-8 rounded flex items-center justify-center shrink-0 border transition-all ${
+                                            task.status === 'Done' ? 'bg-green-900/10 border-green-900/30 text-green-500' : 
+                                            task.status === 'In Progress' ? 'bg-neutral-900 border-neutral-800 text-neutral-200' : 'bg-neutral-900 border-neutral-800 text-neutral-600'
+                                        } ${(!isAdmin && !task.assignedTo?.some(m => (m._id || m) === (user?._id || user?.id))) ? 'cursor-not-allowed opacity-50' : 'hover:border-neutral-500'}`}
+                                    >
                                         {task.status === 'Done' ? <CheckCircle2 size={16} /> : <Circle size={16} />}
-                                    </div>
+                                    </button>
                                     
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
@@ -166,6 +183,11 @@ const ProjectDetailsPage = () => {
                                             }`}>
                                                 {task.priority}
                                             </span>
+                                            {task.status !== 'Done' && task.dueDate && new Date(task.dueDate) < new Date(new Date().setHours(0,0,0,0)) && (
+                                                <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase bg-red-600 text-white animate-pulse">
+                                                    Overdue
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="flex items-center gap-4 text-[10px] text-neutral-500">
                                             <div className="flex items-center -space-x-1">
@@ -185,12 +207,14 @@ const ProjectDetailsPage = () => {
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <button 
-                                            onClick={() => { setEditingTask(task); setIsModalOpen(true); }}
-                                            className="p-1.5 text-neutral-600 hover:text-white transition-none"
-                                        >
-                                            <Edit2 size={14} />
-                                        </button>
+                                        {isAdmin && (
+                                            <button 
+                                                onClick={() => { setEditingTask(task); setIsModalOpen(true); }}
+                                                className="p-1.5 text-neutral-600 hover:text-white transition-none"
+                                            >
+                                                <Edit2 size={14} />
+                                            </button>
+                                        )}
                                         {canManageTasks && (
                                             <button 
                                                 onClick={() => removeTask(task._id)}

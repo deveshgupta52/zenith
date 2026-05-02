@@ -99,6 +99,11 @@ const MyTasksPage = () => {
                                     }`}>
                                         {task.priority}
                                     </span>
+                                    {task.status !== 'Done' && task.dueDate && new Date(task.dueDate) < new Date(new Date().setHours(0,0,0,0)) && (
+                                        <span className="text-[8px] px-1.5 py-0.5 rounded bg-red-600 text-white font-bold uppercase animate-pulse">
+                                            Overdue
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-3 text-[10px] text-neutral-500">
                                     <span className="flex items-center gap-1 uppercase tracking-wider">
