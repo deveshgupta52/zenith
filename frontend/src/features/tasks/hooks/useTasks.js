@@ -18,6 +18,19 @@ export const useTasks = () => {
         }
     }, []);
 
+    const fetchMyTasks = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await taskService.getMyTasks();
+            setTasks(data.tasks);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to fetch your tasks');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+
     const addTask = async (taskData) => {
         setLoading(true);
         try {
@@ -57,8 +70,10 @@ export const useTasks = () => {
         loading,
         error,
         fetchTasks,
+        fetchMyTasks,
         addTask,
         editTask,
         removeTask,
     };
 };
+

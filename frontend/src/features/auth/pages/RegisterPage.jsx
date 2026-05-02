@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 
 const RegisterPage = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -20,9 +20,14 @@ const RegisterPage = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-black px-4 py-12">
             <div className="max-w-md w-full space-y-10 bg-neutral-950 p-10 border border-neutral-900 rounded-lg">
-                <div className="text-center">
-                    <h2 className="text-2xl font-semibold text-white tracking-tight">Create Account</h2>
-                    <p className="mt-2 text-sm text-neutral-500">Join Nexus Pro platform</p>
+                <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
+                        <Sparkles className="text-black fill-black" size={24} />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-neutral-500 bg-clip-text text-transparent tracking-tighter">Zenith</h2>
+                        <p className="mt-1 text-sm text-neutral-500">Join the platform</p>
+                    </div>
                 </div>
 
 

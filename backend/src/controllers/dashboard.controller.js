@@ -13,7 +13,12 @@ export const getDashboardStats = async (req, res) => {
         const projectIds = projects.map(p => p._id);
 
         // Get all tasks for these projects
-        const tasks = await Task.find({ project: { $in: projectIds } });
+        let tasks = await Task.find({ project: { $in: projectIds } });
+
+        // If user is a MEMBER, only show tasks assigned to them
+        if (req.user.role === 'MEMBER') {
+            tasks = tasks.filter(t => t.assignedTo.some(id => id.toString() === req.user.id));
+        }
 
         const stats = {
             totalTasks: tasks.length,

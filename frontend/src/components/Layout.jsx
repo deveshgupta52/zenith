@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../features/auth/hooks/useAuth';
-import { LayoutDashboard, FolderKanban, ListTodo, LogOut, Settings, Layers } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, ListTodo, LogOut, Settings, Sparkles } from 'lucide-react';
 
 const Layout = () => {
     const { user, logout } = useAuth();
@@ -17,17 +17,25 @@ const Layout = () => {
             {/* Sidebar */}
             <aside className="w-64 bg-neutral-950 border-r border-neutral-900 flex flex-col shrink-0">
                 <div className="p-6 border-b border-neutral-900">
-                    <h1 className="text-xl font-semibold text-white flex items-center gap-2 tracking-tight">
-                        <Layers className="text-white" size={24} />
-                        Nexus Pro
+                    <h1 className="text-xl font-bold flex items-center gap-2.5 tracking-tighter">
+                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                            <Sparkles className="text-black fill-black" size={18} />
+                        </div>
+                        <span className="bg-gradient-to-r from-white to-neutral-500 bg-clip-text text-transparent">
+                            Zenith
+                        </span>
                     </h1>
                 </div>
                 
                 <nav className="flex-1 p-4 space-y-1">
                     <NavItem to="/" icon={<LayoutDashboard size={18} />} label="Dashboard" active={location.pathname === '/'} />
                     <NavItem to="/projects" icon={<FolderKanban size={18} />} label="Projects" active={location.pathname.startsWith('/projects')} />
-                    <NavItem to="/tasks" icon={<ListTodo size={18} />} label="My Tasks" active={location.pathname === '/tasks'} />
+                    {user?.role === 'MEMBER' && (
+                        <NavItem to="/tasks" icon={<ListTodo size={18} />} label="My Tasks" active={location.pathname === '/tasks'} />
+                    )}
                     <NavItem to="/settings" icon={<Settings size={18} />} label="Settings" active={location.pathname === '/settings'} />
+
+
                 </nav>
 
                 <div className="p-4 border-t border-neutral-900">

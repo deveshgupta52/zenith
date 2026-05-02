@@ -10,7 +10,7 @@ const SettingsPage = () => {
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
 
-    const { register: profileRegister, handleSubmit: handleProfileSubmit } = useForm({
+    const { register: profileRegister, handleSubmit: handleProfileSubmit, reset: resetProfile } = useForm({
         defaultValues: {
             name: user?.name,
             email: user?.email
@@ -163,32 +163,7 @@ const SettingsPage = () => {
                 </div>
             </div>
 
-            <div className="border-t border-neutral-900 pt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="space-y-1">
-                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider text-[10px] text-neutral-400">Notifications</h3>
-                    <p className="text-xs text-neutral-600">Configure your alert preferences.</p>
-                </div>
-                <div className="md:col-span-2">
-                    <div className="bg-neutral-950 p-6 rounded-lg border border-neutral-900 space-y-6">
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs font-semibold text-white">Email Notifications</p>
-                                    <p className="text-[10px] text-neutral-600">Receive alerts via email.</p>
-                                </div>
-                                <input type="checkbox" className="w-4 h-4 bg-neutral-900 border-neutral-800 rounded focus:ring-0 accent-white" defaultChecked />
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs font-semibold text-white">Push Notifications</p>
-                                    <p className="text-[10px] text-neutral-600">Receive real-time browser alerts.</p>
-                                </div>
-                                <input type="checkbox" className="w-4 h-4 bg-neutral-900 border-neutral-800 rounded focus:ring-0 accent-white" defaultChecked />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
         </div>
     );
 };
