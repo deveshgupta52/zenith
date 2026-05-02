@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { config } from "./config/config.js";
 import authRoutes from "./routes/auth.routes.js";
+
 import projectRoutes from "./routes/project.routes.js";
 import taskRoutes from "./routes/task.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -11,8 +13,7 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 const app = express();
 
 const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    "https://zenith-production-999a.up.railway.app", // Hardcoded fallback for now to be safe
+    config.FRONTEND_URL,
     "http://localhost:5173"
 ].filter(Boolean);
 
