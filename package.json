@@ -4,6 +4,7 @@
   "description": "Root package for Zenith MERN app",
   "private": true,
   "scripts": {
+    "start": "cd backend && npm start",
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "backend": "cd backend && npm start",
     "frontend": "cd frontend && npm run build"
