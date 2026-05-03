@@ -12,19 +12,9 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 
 const app = express();
 
-const corsOptions = {
-    origin: function (origin, callback) {
-        callback(null, true);
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-    optionsSuccessStatus: 200
-};
 
+app.use(cors());
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
