@@ -14,23 +14,25 @@ const app = express();
 
 const allowedOrigins = [
     config.FRONTEND_URL,
-    "http://localhost:5173"
+    "https://zenith-production-999a.up.railway.app",
+    "http://localhost:5173",
+    "http://localhost:3000"
 ].filter(Boolean);
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes("*")) {
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(null, false);
         }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    optionsSuccessStatus: 200
 }));
+
 
 // Preflight is handled by the global cors middleware below
 app.use(express.json());
