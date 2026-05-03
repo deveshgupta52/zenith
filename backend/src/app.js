@@ -12,37 +12,31 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 
 const app = express();
 
-const allowedOrigins = [
-    config.FRONTEND_URL,
-    "https://zenith-production-999a.up.railway.app",
-    "http://localhost:5173",
-    "http://localhost:3000"
-].filter(Boolean);
-
-app.use(cors({
+const corsOptions = {
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(null, false);
-        }
+        callback(null, true);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
     optionsSuccessStatus: 200
-}));
+};
 
 
-// Preflight is handled by the global cors middleware below
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
+
+app.get("/", (req, res) => res.json({ message: "Zenith API is running", env: config.NODE_ENV }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+
 
 
 
