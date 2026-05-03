@@ -11,9 +11,8 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 
 
 const app = express();
-
 app.use(cors({
-  origin: "https://zenith-production-999a.up.railway.app",
+  origin: true,        
   credentials: true
 }));
 
