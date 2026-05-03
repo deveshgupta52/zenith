@@ -12,13 +12,11 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 
 const app = express();
 
-
 app.use(cors({
   origin: "https://zenith-production-999a.up.railway.app",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));
-app.options("*", cors()); 
+
 
 app.use(express.json());
 app.use(cookieParser());
